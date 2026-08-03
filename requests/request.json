@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "request_id": "skill-e2e-click-817",
+  "sources": [
+    {
+      "type": "github",
+      "repository": "pallets/click",
+      "ref": "8.1.7",
+      "destination": "sources/click",
+      "include_git_history": false
+    }
+  ],
+  "python": {
+    "enabled": true,
+    "requirements": ["click==8.1.7"],
+    "requirements_files": [],
+    "only_binary": true
+  },
+  "node": {
+    "enabled": false,
+    "manager": "pnpm"
+  },
+  "artifact": {
+    "part_size_mb": 20
+  }
+}

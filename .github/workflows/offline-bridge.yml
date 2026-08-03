@@ -1,0 +1,133 @@
+name: Offline Bridge
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - requests/request.json
+      - scripts/**
+      - schemas/**
+      - skills/**
+      - .github/workflows/offline-bridge.yml
+  push:
+    branches: [main]
+    paths:
+      - requests/request.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: offline-bridge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout bridge repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Build offline bundle
+        env:
+          BRIDGE_GITHUB_TOKEN: ${{ secrets.BRIDGE_GITHUB_TOKEN }}
+        run: |
+          python scripts/build_bundle.py \
+            --request requests/request.json \
+            --output bridge-output
+
+      - name: Upload manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-manifest
+          path: bridge-output/manifest/
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 6
+
+      - name: Upload part 001
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-001') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-001
+          path: bridge-output/parts/bundle.part-001
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 002
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-002') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-002
+          path: bridge-output/parts/bundle.part-002
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 003
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-003') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-003
+          path: bridge-output/parts/bundle.part-003
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 004
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-004') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-004
+          path: bridge-output/parts/bundle.part-004
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 005
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-005') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-005
+          path: bridge-output/parts/bundle.part-005
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 006
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-006') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-006
+          path: bridge-output/parts/bundle.part-006
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 007
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-007') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-007
+          path: bridge-output/parts/bundle.part-007
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload part 008
+        if: ${{ hashFiles('bridge-output/parts/bundle.part-008') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-part-008
+          path: bridge-output/parts/bundle.part-008
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/datebdio/offline-bridge/schemas/request.schema.json",
+  "title": "Offline Bridge Request",
+  "type": "object",
+  "required": ["version", "request_id", "sources", "artifact"],
+  "properties": {
+    "version": {"const": 1},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["type", "repository"],
+            "properties": {
+              "type": {"const": "github"},
+              "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+              "ref": {"type": "string"},
+              "destination": {"type": "string"},
+              "include_git_history": {"type": "boolean", "default": false}
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["type", "url"],
+            "properties": {
+              "type": {"const": "url"},
+              "url": {"type": "string", "format": "uri", "pattern": "^https://"},
+              "destination": {"type": "string"},
+              "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "python": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean", "default": true},
+        "requirements": {"type": "array", "items": {"type": "string"}},
+        "requirements_files": {"type": "array", "items": {"type": "string"}},
+        "only_binary": {"type": "boolean", "default": true},
+        "no_deps": {"type": "boolean", "default": false},
+        "platform": {"type": "string"},
+        "implementation": {"type": "string"},
+        "python_version": {"type": "string"},
+        "abi": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean", "default": false},
+        "manager": {"const": "pnpm"},
+        "project_dir": {"type": "string", "default": "."},
+        "pnpm_version": {"type": "string", "default": "9"},
+        "production": {"type": "boolean", "default": false}
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["part_size_mb"],
+      "properties": {
+        "part_size_mb": {"type": "integer", "minimum": 1, "maximum": 900}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
