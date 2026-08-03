@@ -1,18 +1,10 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
-  "sources": [
-    {
-      "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
-      "include_git_history": false
-    }
-  ],
+  "request_id": "mysql8-test-20260804-0712",
+  "sources": [],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
@@ -20,7 +12,13 @@
     "enabled": false,
     "manager": "pnpm"
   },
+  "https": [
+    {
+      "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-server_8.0.0_amd64.deb-bundle.tar",
+      "destination": "packages/mysql-server-8.tar"
+    }
+  ],
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 100
   }
 }
