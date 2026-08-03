@@ -1,5 +1,7 @@
 # Offline Bridge
 
+> **Assistant entry point:** read [`START_HERE.md`](START_HERE.md) first. It points to the current operating rules in `skills/offline-bridge/SKILL.md`.
+
 Offline Bridge transfers repositories and support libraries into an execution environment that cannot reach the public internet. GitHub Actions performs the online download and packaging, while the connected GitHub tool downloads the resulting Artifacts directly into the execution environment. The user does not manually upload files.
 
 ## What it supports
@@ -8,18 +10,21 @@ Offline Bridge transfers repositories and support libraries into an execution en
 - public HTTPS files with optional SHA-256 pinning
 - Python wheelhouses
 - pnpm offline stores
+- validated installation profiles for system software
 - binary-safe, multi-part Artifact transfer
 - end-to-end SHA-256 verification and safe extraction
 
 ## How a job works
 
-1. A bridge request is committed to a temporary branch.
-2. A pull request triggers `.github/workflows/offline-bridge.yml`.
-3. `scripts/build_bundle.py` downloads and packages the requested content without executing cloned project code.
-4. GitHub stores a manifest Artifact plus one or more binary part Artifacts.
-5. The connected GitHub tool downloads those Artifacts directly into `/mnt/data`.
-6. `scripts/receive_bundle.py` reconstructs, verifies, and safely extracts the payload.
-7. The temporary PR is closed without merging.
+1. The assistant reads `START_HERE.md`, then the latest `skills/offline-bridge/SKILL.md`.
+2. A bridge request is committed to a temporary branch.
+3. A pull request triggers `.github/workflows/offline-bridge.yml`.
+4. `scripts/build_bundle.py` downloads and packages the requested content without executing cloned project code.
+5. GitHub stores a manifest Artifact plus one or more binary part Artifacts.
+6. The connected GitHub tool downloads those Artifacts directly into `/mnt/data`.
+7. `scripts/receive_bundle.py` reconstructs, verifies, and safely extracts the payload.
+8. The assistant completes the original installation or execution task and performs a functional smoke test.
+9. The temporary PR is closed without merging.
 
 ## Request example
 
@@ -47,7 +52,7 @@ Offline Bridge transfers repositories and support libraries into an execution en
 }
 ```
 
-The complete assistant-side operating procedure is in `skills/offline-bridge/SKILL.md`. The request schema is in `schemas/request.schema.json`.
+The request schema is in `schemas/request.schema.json`.
 
 ## Private repositories
 
