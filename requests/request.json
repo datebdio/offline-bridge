@@ -1,7 +1,13 @@
 {
   "version": 1,
   "request_id": "mysql8-test-20260804-0712",
-  "sources": [],
+  "sources": [
+    {
+      "type": "url",
+      "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-server_8.0.0_amd64.deb-bundle.tar",
+      "destination": "packages/mysql-server-8.tar"
+    }
+  ],
   "python": {
     "enabled": false,
     "requirements": [],
@@ -12,12 +18,6 @@
     "enabled": false,
     "manager": "pnpm"
   },
-  "https": [
-    {
-      "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-server_8.0.0_amd64.deb-bundle.tar",
-      "destination": "packages/mysql-server-8.tar"
-    }
-  ],
   "artifact": {
     "part_size_mb": 100
   }
