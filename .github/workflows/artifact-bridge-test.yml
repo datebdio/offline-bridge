@@ -1,0 +1,73 @@
+name: Offline Bridge Artifact Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate deterministic binary payload
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import platform
+
+          output = Path('payload')
+          output.mkdir(parents=True, exist_ok=True)
+
+          text = b'Offline Bridge direct artifact transfer test.\n'
+          (output / 'hello.txt').write_bytes(text)
+
+          block = bytes(range(256))
+          binary = block * 8192  # exactly 2 MiB
+          (output / 'deterministic-2MiB.bin').write_bytes(binary)
+
+          files = {}
+          for path in sorted(output.iterdir()):
+              if path.is_file():
+                  data = path.read_bytes()
+                  files[path.name] = {
+                      'size': len(data),
+                      'sha256': hashlib.sha256(data).hexdigest(),
+                  }
+
+          manifest = {
+              'test': 'offline-bridge-artifact-direct-download',
+              'runner_os': platform.system(),
+              'files': files,
+          }
+          (output / 'manifest.json').write_text(
+              json.dumps(manifest, indent=2, sort_keys=True),
+              encoding='utf-8',
+          )
+          print(json.dumps(manifest, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload test payload
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-bridge-test-payload
+          path: payload/
+          compression-level: 0
+          retention-days: 1
+
+      - name: Print artifact metadata
+        shell: bash
+        run: |
+          echo "artifact-id=${{ steps.upload.outputs.artifact-id }}"
+          echo "artifact-url=${{ steps.upload.outputs.artifact-url }}"
+          echo "artifact-digest=${{ steps.upload.outputs.artifact-digest }}"
