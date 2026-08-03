@@ -1,0 +1,86 @@
+name: Offline Bridge Large Artifact Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-large-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate large multi-file payload
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import platform
+
+          output = Path('payload-large')
+          small_dir = output / 'small-files'
+          small_dir.mkdir(parents=True, exist_ok=True)
+
+          large_path = output / 'deterministic-128MiB.bin'
+          chunk = bytes(range(256)) * 4096  # 1 MiB
+          hasher = hashlib.sha256()
+          with large_path.open('wb') as f:
+              for _ in range(128):
+                  f.write(chunk)
+                  hasher.update(chunk)
+
+          for i in range(1500):
+              data = f'offline-bridge-small-file-{i:04d}\n'.encode('utf-8')
+              (small_dir / f'file-{i:04d}.txt').write_bytes(data)
+
+          entries = []
+          for path in sorted(output.rglob('*')):
+              if path.is_file():
+                  data = path.read_bytes()
+                  entries.append({
+                      'path': path.relative_to(output).as_posix(),
+                      'size': len(data),
+                      'sha256': hashlib.sha256(data).hexdigest(),
+                  })
+
+          manifest = {
+              'test': 'offline-bridge-large-multifile-transfer',
+              'runner_os': platform.system(),
+              'file_count_without_manifest': len(entries),
+              'total_payload_bytes_without_manifest': sum(x['size'] for x in entries),
+              'files': entries,
+          }
+          (output / 'manifest.json').write_text(
+              json.dumps(manifest, indent=2, sort_keys=True),
+              encoding='utf-8',
+          )
+          print(json.dumps({
+              'file_count': len(entries),
+              'payload_bytes': manifest['total_payload_bytes_without_manifest'],
+              'large_file_sha256': hasher.hexdigest(),
+          }, indent=2))
+          PY
+
+      - name: Upload large test payload
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-bridge-large-test-payload
+          path: payload-large/
+          compression-level: 0
+          retention-days: 1
+
+      - name: Print artifact metadata
+        shell: bash
+        run: |
+          echo "artifact-id=${{ steps.upload.outputs.artifact-id }}"
+          echo "artifact-url=${{ steps.upload.outputs.artifact-url }}"
+          echo "artifact-digest=${{ steps.upload.outputs.artifact-digest }}"
