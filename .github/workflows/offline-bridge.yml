@@ -39,7 +39,7 @@ jobs:
         env:
           BRIDGE_GITHUB_TOKEN: ${{ secrets.BRIDGE_GITHUB_TOKEN }}
         run: |
-          python scripts/build_bundle.py \
+          python scripts/build_remotion_bundle.py \
             --request requests/request.json \
             --output bridge-output
 
