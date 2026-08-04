@@ -1,26 +1,32 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "mysql-8046-debian13-amd64",
   "sources": [
     {
-      "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.46-linux-glibc2.17-x86_64-minimal.tar.xz",
+      "destination": "downloads/mysql-8.0.46-linux-glibc2.17-x86_64-minimal.tar.xz"
+    },
+    {
+      "type": "url",
+      "url": "https://deb.debian.org/debian/pool/main/liba/libaio/libaio1t64_0.3.113-8+b1_amd64.deb",
+      "destination": "downloads/libaio1t64_0.3.113-8+b1_amd64.deb",
+      "sha256": "490c8a2d116001a5f3b0a6d7a7aabf6a7b629366590dc5c3f75b078e931dd129"
+    },
+    {
+      "type": "url",
+      "url": "https://deb.debian.org/debian/pool/main/n/ncurses/libtinfo5_6.4-4_amd64.deb",
+      "destination": "downloads/libtinfo5_6.4-4_amd64.deb",
+      "sha256": "dd347f794e651039e7b4c391f86c674fed7f415b3dca6b0937beb0d470f09c1a"
+    },
+    {
+      "type": "url",
+      "url": "https://deb.debian.org/debian/pool/main/n/ncurses/libncurses5_6.4-4_amd64.deb",
+      "destination": "downloads/libncurses5_6.4-4_amd64.deb",
+      "sha256": "02f4f7f52c4ce2fc4021793a931bfd85f7870554b8e4d56576d73a4ed0bdb390"
     }
   ],
-  "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
-    "requirements_files": [],
-    "only_binary": true
-  },
-  "node": {
-    "enabled": false,
-    "manager": "pnpm"
-  },
-  "artifact": {
-    "part_size_mb": 20
-  }
+  "python": {"enabled": false, "requirements": [], "requirements_files": [], "only_binary": true},
+  "node": {"enabled": false, "manager": "pnpm"},
+  "artifact": {"part_size_mb": 100}
 }
