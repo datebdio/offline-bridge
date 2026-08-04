@@ -8,7 +8,6 @@ copied into the payload so the restricted target does not need npm or pnpm acces
 from __future__ import annotations
 
 import shutil
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +37,6 @@ def install_node_project(
 
     lockfile = project_dir / "pnpm-lock.yaml"
     if not lockfile.is_file():
-        # Generates only dependency metadata. Lifecycle scripts remain disabled.
         base.run(
             [
                 "pnpm",
@@ -65,8 +63,18 @@ def install_node_project(
     base.run(command, cwd=project_dir)
 
     target = payload / "node" / "project"
-    shutil.copytree(project_dir, target)
+    # copytree follows pnpm links and writes regular files/directories, yielding a
+    # portable, self-contained tree accepted by the safe receiver.
+    shutil.copytree(project_dir, target, symlinks=False)
+
+    # The installation source still contains pnpm's relative links. It is already
+    # duplicated safely above, so remove the linked tree before manifest creation.
+    shutil.rmtree(project_dir / "node_modules", ignore_errors=True)
     shutil.rmtree(store, ignore_errors=True)
+
+    remaining_links = [str(path) for path in target.rglob("*") if path.is_symlink()]
+    if remaining_links:
+        base.fail(f"portable node project still contains symlinks: {remaining_links[:5]}")
 
     return {
         "manager": "pnpm",
@@ -74,6 +82,7 @@ def install_node_project(
         "project": "node/project",
         "production": bool(config.get("production", False)),
         "lifecycle_scripts": False,
+        "symlinks": 0,
     }
 
 
