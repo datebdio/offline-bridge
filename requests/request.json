@@ -1,18 +1,32 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "invoice-pdf-helper-20260804-0854",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
+      "repository": "phpdave11/gofpdf",
+      "ref": "95d7704723b18e9b55cd71b234a2e40815e990d6",
+      "destination": "sources/gofpdf",
+      "include_git_history": false
+    },
+    {
+      "type": "github",
+      "repository": "phpdave11/gofpdi",
+      "ref": "7606376c100757d57ab52ba50394f32bf0ee26e3",
+      "destination": "sources/gofpdi",
+      "include_git_history": false
+    },
+    {
+      "type": "github",
+      "repository": "akavel/rsrc",
+      "ref": "936343600d578fb5da472acf6987ed76935a389b",
+      "destination": "sources/rsrc",
       "include_git_history": false
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
@@ -21,6 +35,6 @@
     "manager": "pnpm"
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 100
   }
 }
