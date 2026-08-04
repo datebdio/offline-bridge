@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "request_id": "invoice-pdf-helper-20260804-0854",
+  "request_id": "invoice-pdf-helper-20260804-0854-v2",
   "sources": [
     {
       "type": "github",
@@ -14,6 +14,13 @@
       "repository": "phpdave11/gofpdi",
       "ref": "7606376c100757d57ab52ba50394f32bf0ee26e3",
       "destination": "sources/gofpdi",
+      "include_git_history": false
+    },
+    {
+      "type": "github",
+      "repository": "pkg/errors",
+      "ref": "v0.9.1",
+      "destination": "sources/pkg-errors",
       "include_git_history": false
     },
     {
