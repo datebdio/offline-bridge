@@ -1,27 +1,21 @@
 {
   "version": 1,
-  "request_id": "invoice-pdf-helper-20260804-0854-v2",
+  "request_id": "invoice-pdf-helper-pdfcpu-20260804-0918",
   "sources": [
     {
-      "type": "github",
-      "repository": "phpdave11/gofpdf",
-      "ref": "95d7704723b18e9b55cd71b234a2e40815e990d6",
-      "destination": "sources/gofpdf",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://dl.pdfcpu.io/releases/download/v0.12.1/checksums.txt",
+      "destination": "downloads/pdfcpu/checksums.txt"
     },
     {
-      "type": "github",
-      "repository": "phpdave11/gofpdi",
-      "ref": "7606376c100757d57ab52ba50394f32bf0ee26e3",
-      "destination": "sources/gofpdi",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://dl.pdfcpu.io/releases/download/v0.12.1/pdfcpu_0.12.1_Windows_x86_64.zip",
+      "destination": "downloads/pdfcpu/pdfcpu_0.12.1_Windows_x86_64.zip"
     },
     {
-      "type": "github",
-      "repository": "pkg/errors",
-      "ref": "v0.9.1",
-      "destination": "sources/pkg-errors",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://dl.pdfcpu.io/releases/download/v0.12.1/pdfcpu_0.12.1_Linux_x86_64.tar.xz",
+      "destination": "downloads/pdfcpu/pdfcpu_0.12.1_Linux_x86_64.tar.xz"
     },
     {
       "type": "github",
