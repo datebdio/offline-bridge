@@ -1,33 +1,11 @@
 {
   "version": 1,
-  "request_id": "remotion-anta-led-20260804",
+  "request_id": "remotion-chrome-headless-shell-149-linux64",
   "sources": [
     {
-      "type": "github",
-      "repository": "kartik786-git/remotion-blank-template",
-      "ref": "main",
-      "destination": "sources/remotion-template",
-      "include_git_history": false
-    },
-    {
       "type": "url",
-      "url": "https://upload.wikimedia.org/wikipedia/commons/2/29/Anta_logo.svg",
-      "destination": "assets/anta-logo.svg"
-    },
-    {
-      "type": "url",
-      "url": "https://img.myshopline.com/image/store/1768803635456/112525546-7-1.jpg?h=800&w=800",
-      "destination": "assets/anta-shoe-01.jpg"
-    },
-    {
-      "type": "url",
-      "url": "https://img.myshopline.com/image/store/1768803635456/my-11134207-7rasj-mb63dbsrxz1m29.jpg?h=800&w=800",
-      "destination": "assets/anta-shoe-02.jpg"
-    },
-    {
-      "type": "url",
-      "url": "https://img.myshopline.com/image/store/1768803635456/my-file-2024-01-19T150627.jpg?h=800&w=800",
-      "destination": "assets/anta-shoe-03.jpg"
+      "url": "https://storage.googleapis.com/chrome-for-testing-public/149.0.7790.0/linux64/chrome-headless-shell-linux64.zip",
+      "destination": "browser/chrome-headless-shell-linux64.zip"
     }
   ],
   "python": {
@@ -37,13 +15,10 @@
     "only_binary": true
   },
   "node": {
-    "enabled": true,
-    "manager": "pnpm",
-    "project_dir": "sources/remotion-template",
-    "pnpm_version": "10.20.0",
-    "production": true
+    "enabled": false,
+    "manager": "pnpm"
   },
   "artifact": {
-    "part_size_mb": 300
+    "part_size_mb": 200
   }
 }
