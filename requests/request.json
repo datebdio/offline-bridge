@@ -1,26 +1,49 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "remotion-anta-led-20260804",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
+      "repository": "kartik786-git/remotion-blank-template",
+      "ref": "main",
+      "destination": "sources/remotion-template",
       "include_git_history": false
+    },
+    {
+      "type": "url",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/29/Anta_logo.svg",
+      "destination": "assets/anta-logo.svg"
+    },
+    {
+      "type": "url",
+      "url": "https://img.myshopline.com/image/store/1768803635456/112525546-7-1.jpg?h=800&w=800",
+      "destination": "assets/anta-shoe-01.jpg"
+    },
+    {
+      "type": "url",
+      "url": "https://img.myshopline.com/image/store/1768803635456/my-11134207-7rasj-mb63dbsrxz1m29.jpg?h=800&w=800",
+      "destination": "assets/anta-shoe-02.jpg"
+    },
+    {
+      "type": "url",
+      "url": "https://img.myshopline.com/image/store/1768803635456/my-file-2024-01-19T150627.jpg?h=800&w=800",
+      "destination": "assets/anta-shoe-03.jpg"
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
   "node": {
-    "enabled": false,
-    "manager": "pnpm"
+    "enabled": true,
+    "manager": "pnpm",
+    "project_dir": "sources/remotion-template",
+    "pnpm_version": "10.20.0",
+    "production": true
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 300
   }
 }
