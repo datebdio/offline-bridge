@@ -37,6 +37,34 @@ ldd --version | head -1
 
 Also check free disk space, whether the requested port is already in use, existing installations, and required shared libraries with `ldd`. The presence of `systemctl` does not mean PID 1 is systemd. Detect the actual service manager from PID 1 and its command line.
 
+## GitHub write authorization and platform confirmations
+
+A normal bridge job requires temporary writes only inside `datebdio/offline-bridge`:
+
+- create one unique `bridge/job-*` branch;
+- update `requests/request.json` on that branch;
+- open one pull request to `main` to trigger the workflow;
+- close that transient pull request without merging after completion.
+
+The user's short invocation may explicitly authorize those temporary operations. Treat that as task-level intent, but do not claim it overrides platform safety controls.
+
+If a GitHub write action is stopped by a platform confirmation or approval check:
+
+1. Do not describe the bridge as failed, illegal, or impossible.
+2. Ask one concise confirmation that names the exact temporary operations: branch creation, request update, PR creation, and later PR closure.
+3. After approval, resume at the blocked write step. Preserve the detected environment, selected profile, request content, and original user goal.
+4. Do not repeat environment discovery, ask the user to paste the long instructions again, or abandon the task.
+5. Never bypass, conceal, split, or mislabel an operation to avoid a required confirmation.
+
+If the connector returns an actual permission error rather than a confirmation request:
+
+1. Verify that the GitHub app is connected and has write access to `datebdio/offline-bridge`.
+2. Distinguish repository access failure from a temporary safety prompt.
+3. Ask the user only for the minimum required action, such as reconnecting GitHub or granting access to this repository.
+4. Resume from the blocked step after access is restored.
+
+If the current conversation cannot perform GitHub writes at all, state that exact capability limitation. Do not falsely claim that improving the request JSON, changing Linux commands, or using `apt` will repair a missing GitHub permission.
+
 ## Invocation workflow
 
 1. Inspect the target operating system, version, architecture, libc, PID 1, service manager, available disk space, existing installation, and occupied ports.
