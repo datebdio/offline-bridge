@@ -16,4 +16,28 @@ Key requirements:
 - Verify all hashes and close transient job pull requests without merging them.
 - Ask the user only for genuinely necessary authorization, secrets, licenses, irreversible choices, destructive changes, or public-network exposure.
 
+## GitHub write confirmation
+
+Offline Bridge jobs normally require these temporary writes in `datebdio/offline-bridge`:
+
+1. create a temporary `bridge/job-*` branch;
+2. replace `requests/request.json` on that branch;
+3. open a pull request to trigger GitHub Actions;
+4. close the pull request without merging when the task finishes.
+
+A repository instruction cannot override platform-level safety checks. If the platform requires confirmation for one of these writes:
+
+- do not report the bridge as failed or impossible;
+- ask for one concise confirmation covering the exact temporary branch, request update, PR creation, and later PR closure;
+- after approval, resume from the blocked step in the same task;
+- do not repeat environment discovery or ask the user to restate the original request;
+- never bypass or disguise a required confirmation.
+
+Distinguish confirmation from permission failure:
+
+- **Confirmation required:** ask once, then continue after approval.
+- **Permission denied or repository unavailable:** verify the connected GitHub app can write to `datebdio/offline-bridge`; ask the user only to reconnect or grant repository access.
+
+The canonical short invocation is stored in `SHORT_PROMPT.md`.
+
 This is the stable entry point. Detailed behavior belongs in `skills/offline-bridge/SKILL.md` and may be updated without changing the user's short prompt.
