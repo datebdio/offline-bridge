@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "libredwg-0134-debian13-amd64",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
+      "repository": "LibreDWG/libredwg",
+      "ref": "0.13.4",
+      "destination": "sources/libredwg",
       "include_git_history": false
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
@@ -21,6 +21,6 @@
     "manager": "pnpm"
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 100
   }
 }
