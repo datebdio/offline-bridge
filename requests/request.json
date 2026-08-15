@@ -1,26 +1,15 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "xray-linux64-v26.3.27-20260815",
   "sources": [
     {
-      "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://github.com/XTLS/Xray-core/releases/download/v26.3.27/Xray-linux-64.zip",
+      "destination": "downloads/Xray-linux-64.zip",
+      "sha256": "23cd9af937744d97776ee35ecad4972cf4b2109d1e0fe6be9930467608f7c8ae"
     }
   ],
-  "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
-    "requirements_files": [],
-    "only_binary": true
-  },
-  "node": {
-    "enabled": false,
-    "manager": "pnpm"
-  },
-  "artifact": {
-    "part_size_mb": 20
-  }
+  "python": {"enabled": false, "requirements": [], "requirements_files": [], "only_binary": true},
+  "node": {"enabled": false, "manager": "pnpm"},
+  "artifact": {"part_size_mb": 50}
 }
