@@ -1,26 +1,34 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "geo-v3-soybean-20260818",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
+      "repository": "soybeanjs/soybean-admin",
+      "ref": "main",
+      "destination": "sources/soybean-admin",
       "include_git_history": false
+    },
+    {
+      "type": "url",
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.5.2.tgz",
+      "destination": "tools/pnpm-10.5.2.tgz"
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
   "node": {
-    "enabled": false,
-    "manager": "pnpm"
+    "enabled": true,
+    "manager": "pnpm",
+    "project_dir": "sources/soybean-admin",
+    "pnpm_version": "10.5.2",
+    "production": false
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 200
   }
 }
