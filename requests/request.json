@@ -5,8 +5,7 @@
     {
       "type": "url",
       "url": "https://registry.npmjs.org/@electric-sql/pglite/-/pglite-0.5.4.tgz",
-      "destination": "downloads/pglite-0.5.4.tgz",
-      "sha256": ""
+      "destination": "downloads/pglite-0.5.4.tgz"
     }
   ],
   "python": {"enabled": false},
