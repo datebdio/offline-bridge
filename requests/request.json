@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "request_id": "download-1gb-test-20260820",
+  "request_id": "download-1gb-test-20260820-v2",
   "sources": [
     {
       "type": "url",
-      "url": "https://speed.hetzner.de/1GB.bin",
-      "destination": "downloads/1GB.bin"
+      "url": "https://speed.cloudflare.com/__down?bytes=1073741824",
+      "destination": "downloads/1GiB.bin"
     }
   ],
   "python": {"enabled": false},
