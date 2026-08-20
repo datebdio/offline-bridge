@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "vm-retest-click-817-20260820",
   "sources": [
     {
       "type": "github",
@@ -12,7 +12,9 @@
   ],
   "python": {
     "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "requirements": [
+      "click==8.1.7"
+    ],
     "requirements_files": [],
     "only_binary": true
   },
