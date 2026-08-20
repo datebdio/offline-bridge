@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "request_id": "geov4-publisher-20260821",
+  "request_id": "geov4-publisher-20260821-refresh",
   "sources": [
     {
       "type": "github",
