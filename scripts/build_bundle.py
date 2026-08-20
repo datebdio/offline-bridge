@@ -219,6 +219,11 @@ def pnpm_fetch(config: dict[str, Any], payload: Path, source_root: Path) -> dict
     if config.get("production", False):
         command.append("--prod")
     run(command, cwd=project_dir)
+    # pnpm creates a project index containing links back to the source checkout.
+    # The content-addressed package store is sufficient for offline install, and
+    # external project links must not be included in a transferable archive.
+    for projects_dir in store.glob("v*/projects"):
+        shutil.rmtree(projects_dir)
     shutil.copy2(lockfile, payload / "node" / "pnpm-lock.yaml")
     package_json = project_dir / "package.json"
     if package_json.is_file():
