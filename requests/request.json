@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "request_id": "download-1gb-test-20260820-v2",
+  "request_id": "download-1gb-test-20260820-v3",
   "sources": [
     {
       "type": "url",
-      "url": "https://speed.cloudflare.com/__down?bytes=1073741824",
-      "destination": "downloads/1GiB.bin"
+      "url": "https://proof.ovh.net/files/1Gb.dat",
+      "destination": "downloads/1Gb.dat"
     }
   ],
   "python": {"enabled": false},
