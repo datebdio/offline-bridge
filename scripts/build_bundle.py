@@ -203,11 +203,11 @@ def pnpm_fetch(config: dict[str, Any], payload: Path, source_root: Path) -> dict
         fail("node.manager currently supports only 'pnpm'")
     project_dir = source_root / safe_relative(config.get("project_dir", "."), "node.project_dir")
     lockfile = project_dir / "pnpm-lock.yaml"
-    if not lockfile.is_file() and config.get("generate_lockfile", False):
+    if config.get("generate_lockfile", False):
         version = str(config.get("pnpm_version", "9"))
         run(["corepack", "enable"])
         run(["corepack", "prepare", f"pnpm@{version}", "--activate"])
-        run(["pnpm", "install", "--lockfile-only", "--ignore-scripts"], cwd=project_dir)
+        run(["pnpm", "install", "--lockfile-only", "--no-frozen-lockfile", "--ignore-scripts"], cwd=project_dir)
         # Lockfile generation can still create workspace node_modules links.
         # They are installation output, not source, and may point outside the
         # archive. Keep only the generated lockfile and fetched package store.
