@@ -203,6 +203,11 @@ def pnpm_fetch(config: dict[str, Any], payload: Path, source_root: Path) -> dict
         fail("node.manager currently supports only 'pnpm'")
     project_dir = source_root / safe_relative(config.get("project_dir", "."), "node.project_dir")
     lockfile = project_dir / "pnpm-lock.yaml"
+    if not lockfile.is_file() and config.get("generate_lockfile", False):
+        version = str(config.get("pnpm_version", "9"))
+        run(["corepack", "enable"])
+        run(["corepack", "prepare", f"pnpm@{version}", "--activate"])
+        run(["pnpm", "install", "--lockfile-only", "--ignore-scripts"], cwd=project_dir)
     if not lockfile.is_file():
         fail(f"pnpm-lock.yaml not found in {project_dir}")
     version = str(config.get("pnpm_version", "9"))
