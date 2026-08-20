@@ -208,6 +208,13 @@ def pnpm_fetch(config: dict[str, Any], payload: Path, source_root: Path) -> dict
         run(["corepack", "enable"])
         run(["corepack", "prepare", f"pnpm@{version}", "--activate"])
         run(["pnpm", "install", "--lockfile-only", "--ignore-scripts"], cwd=project_dir)
+        # Lockfile generation can still create workspace node_modules links.
+        # They are installation output, not source, and may point outside the
+        # archive. Keep only the generated lockfile and fetched package store.
+        module_dirs = sorted(project_dir.rglob("node_modules"), key=lambda path: len(path.parts), reverse=True)
+        for modules_dir in module_dirs:
+            if modules_dir.is_dir() or modules_dir.is_symlink():
+                shutil.rmtree(modules_dir, ignore_errors=True)
     if not lockfile.is_file():
         fail(f"pnpm-lock.yaml not found in {project_dir}")
     version = str(config.get("pnpm_version", "9"))
