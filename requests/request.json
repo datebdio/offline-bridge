@@ -1,26 +1,41 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "geov4-dev-20260831-070543",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
-      "include_git_history": false
+      "repository": "datebdio/GEOv4",
+      "ref": "feat/phase-1-foundation",
+      "destination": "sources/GEOv4",
+      "include_git_history": true
+    },
+    {
+      "type": "url",
+      "url": "https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-x64.tar.xz",
+      "destination": "toolchain/node-v24.12.0-linux-x64.tar.xz",
+      "sha256": "bdebee276e58d0ef5448f3d5ac12c67daa963dd5e0a9bb621a53d1cefbc852fd"
+    },
+    {
+      "type": "url",
+      "url": "https://github.com/pnpm/pnpm/releases/download/v11.19.0/pnpm-linux-x64.tar.gz",
+      "destination": "toolchain/pnpm-linux-x64.tar.gz",
+      "sha256": "01562375e2b05b5cdc8d67e0bbfed549221c8a739b485ee0dac13d32d383ec24"
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
   "node": {
-    "enabled": false,
-    "manager": "pnpm"
+    "enabled": true,
+    "manager": "pnpm",
+    "project_dir": "sources/GEOv4",
+    "pnpm_version": "11.19.0",
+    "production": false
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 200
   }
 }
