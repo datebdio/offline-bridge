@@ -48,15 +48,30 @@ def discover_manifest(root: Path) -> Path:
     return candidates[0]
 
 
+def resolve_link_inside_archive(member_name: str, link_name: str) -> PurePosixPath:
+    link = PurePosixPath(link_name.replace("\\", "/"))
+    if link.is_absolute():
+        raise RuntimeError(f"absolute link target is not allowed: {member_name} -> {link_name}")
+    resolved = list(PurePosixPath(member_name).parent.parts)
+    for part in link.parts:
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if not resolved:
+                raise RuntimeError(f"link target escapes archive root: {member_name} -> {link_name}")
+            resolved.pop()
+        else:
+            resolved.append(part)
+    return PurePosixPath(*resolved)
+
+
 def verify_tar_members(archive: tarfile.TarFile) -> None:
     for member in archive.getmembers():
         safe_member(member.name)
         if member.ischr() or member.isblk() or member.isfifo():
             raise RuntimeError(f"special files are not allowed: {member.name}")
         if member.issym() or member.islnk():
-            link = PurePosixPath(member.linkname.replace("\\", "/"))
-            if link.is_absolute() or ".." in link.parts:
-                raise RuntimeError(f"unsafe link target: {member.name} -> {member.linkname}")
+            resolve_link_inside_archive(member.name, member.linkname)
 
 
 def extract_tar_safely(tar_path: Path, destination: Path) -> None:
