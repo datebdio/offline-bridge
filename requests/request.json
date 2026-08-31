@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "gonghuixinfeng-ui-20260831-1530",
   "sources": [
     {
       "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
+      "repository": "datebdio/GongHuiXinFeng",
+      "ref": "main",
+      "destination": "sources/GongHuiXinFeng",
       "include_git_history": false
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
