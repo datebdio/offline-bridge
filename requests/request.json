@@ -1,13 +1,11 @@
 {
   "version": 1,
-  "request_id": "gonghuixinfeng-ui-20260831-1530",
+  "request_id": "gonghuixinfeng-tdesign-1.16.0-20260831",
   "sources": [
     {
-      "type": "github",
-      "repository": "datebdio/GongHuiXinFeng",
-      "ref": "main",
-      "destination": "sources/GongHuiXinFeng",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://registry.npmjs.org/tdesign-miniprogram/-/tdesign-miniprogram-1.16.0.tgz",
+      "destination": "packages/tdesign-miniprogram-1.16.0.tgz"
     }
   ],
   "python": {
