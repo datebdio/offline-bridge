@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "request_id": "aishell3-tts-demo-win64-20261104",
+  "request_id": "tts-demo-aishell3-matcha-win64-20261104",
   "sources": [
     {
       "type": "url",
@@ -17,7 +17,14 @@
     {
       "type": "url",
       "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-icefall-zh-aishell3.tar.bz2",
-      "destination": "downloads/vits-icefall-zh-aishell3.tar.bz2"
+      "destination": "downloads/vits-icefall-zh-aishell3.tar.bz2",
+      "sha256": "ab468db3a3308cdd861495e0db2f25d79418a0c00639f74944c7cdf5dd8c6ec1"
+    },
+    {
+      "type": "url",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/matcha-icefall-zh-baker.tar.bz2",
+      "destination": "downloads/matcha-icefall-zh-baker.tar.bz2",
+      "sha256": "8da2e113b85dfea37b11bcdc994506aa86b584ee3348c2065271fb6f75cb83b8"
     }
   ],
   "python": {
