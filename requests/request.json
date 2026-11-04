@@ -1,12 +1,18 @@
 {
   "version": 1,
-  "request_id": "sherpa-tts-win64-20261104",
+  "request_id": "sherpa-tts-win64-linux-smoke-20261104",
   "sources": [
     {
       "type": "url",
       "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-v2.0.1-win-x64-shared-MT-Release.tar.bz2",
-      "destination": "downloads/sherpa-onnx-v2.0.1-win-x64-shared-MT-Release.tar.bz2",
+      "destination": "downloads/windows/sherpa-onnx-v2.0.1-win-x64-shared-MT-Release.tar.bz2",
       "sha256": "dc703575a68594435f53dec93df775ff4913af851a196c0537163f21d8d2364e"
+    },
+    {
+      "type": "url",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-v2.0.1-linux-x64-shared.tar.bz2",
+      "destination": "downloads/linux/sherpa-onnx-v2.0.1-linux-x64-shared.tar.bz2",
+      "sha256": "2e823376987c3b6960d50726b6560155e2ad92da0b8b3886325773225ec6bdec"
     },
     {
       "type": "url",
