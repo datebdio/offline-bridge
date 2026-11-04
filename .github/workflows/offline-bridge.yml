@@ -157,8 +157,7 @@ jobs:
       - name: Reassemble and verify offline bundle
         shell: pwsh
         run: |
-          Expand-Archive -Path "bridge-manifest/bridge-manifest.zip" -DestinationPath "bridge-manifest/unpacked" -Force
-          $manifest = Get-Content "bridge-manifest/unpacked/bridge-manifest.json" -Raw | ConvertFrom-Json
+          $manifest = Get-Content "bridge-manifest/bridge-manifest.json" -Raw | ConvertFrom-Json
           $parts = Get-ChildItem "bridge-parts/bundle.part-*" | Sort-Object Name
           if ($parts.Count -ne $manifest.payload.parts.Count) { throw "Bundle part count mismatch" }
           $out = [System.IO.File]::Create("bundle.tar")
