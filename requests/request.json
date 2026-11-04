@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "request_id": "sherpa-tts-win64-linux-smoke-20261104",
+  "request_id": "sherpa-melotts-commercial-check-20261104",
   "sources": [
     {
       "type": "url",
@@ -16,9 +16,8 @@
     },
     {
       "type": "url",
-      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-zh_CN-xiao_ya-medium-int8.tar.bz2",
-      "destination": "downloads/vits-piper-zh_CN-xiao_ya-medium-int8.tar.bz2",
-      "sha256": "eab027e194e70289233cf12308373611fa4e2e96ef2d97354ef433ab663d831f"
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-melo-tts-zh_en.tar.bz2",
+      "destination": "downloads/vits-melo-tts-zh_en.tar.bz2"
     }
   ],
   "python": {
