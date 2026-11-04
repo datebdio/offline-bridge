@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - requests/request.json
+      - tts-demo/**
       - scripts/**
       - schemas/**
       - skills/**
@@ -131,3 +132,103 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
+
+  build-aishell3-tts-demo-windows:
+    needs: build
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout demo worker source
+        uses: actions/checkout@v6
+
+      - name: Download offline bridge artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bridge-manifest
+          path: bridge-manifest
+
+      - name: Download offline bridge payload parts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bridge-part-*
+          path: bridge-parts
+          merge-multiple: true
+
+      - name: Reassemble and verify offline bundle
+        shell: pwsh
+        run: |
+          Expand-Archive -Path "bridge-manifest/bridge-manifest.zip" -DestinationPath "bridge-manifest/unpacked" -Force
+          $manifest = Get-Content "bridge-manifest/unpacked/bridge-manifest.json" -Raw | ConvertFrom-Json
+          $parts = Get-ChildItem "bridge-parts/bundle.part-*" | Sort-Object Name
+          if ($parts.Count -ne $manifest.payload.parts.Count) { throw "Bundle part count mismatch" }
+          $out = [System.IO.File]::Create("bundle.tar")
+          try { foreach ($part in $parts) { $stream = [System.IO.File]::OpenRead($part.FullName); try { $stream.CopyTo($out) } finally { $stream.Dispose() } } } finally { $out.Dispose() }
+          $actual = (Get-FileHash "bundle.tar" -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $manifest.payload.archive_sha256) { throw "Offline bundle SHA256 mismatch" }
+          New-Item -ItemType Directory -Force -Path "bridge-payload" | Out-Null
+          tar -xf bundle.tar -C bridge-payload
+          if ($LASTEXITCODE -ne 0) { throw "Cannot unpack bridge payload" }
+
+      - name: Extract Windows runtime and AISHELL3 model
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path
+          $winTar = Join-Path $root "bridge-payload/downloads/windows/sherpa-onnx-v2.0.1-win-x64-shared-MT-Release.tar.bz2"
+          $modelTar = Join-Path $root "bridge-payload/downloads/vits-icefall-zh-aishell3.tar.bz2"
+          New-Item -ItemType Directory -Force -Path "runtime-unpacked","model-unpacked","tts-demo/package/assets/model","tts-demo/package/output" | Out-Null
+          tar -xjf $winTar -C runtime-unpacked
+          if ($LASTEXITCODE -ne 0) { throw "Cannot extract Sherpa Windows runtime" }
+          tar -xjf $modelTar -C model-unpacked
+          if ($LASTEXITCODE -ne 0) { throw "Cannot extract AISHELL3 model" }
+          $rt = Get-ChildItem "runtime-unpacked" -Directory | Select-Object -First 1
+          $md = Get-ChildItem "model-unpacked" -Directory | Select-Object -First 1
+          if (!(Test-Path (Join-Path $md.FullName "model.onnx"))) { throw "AISHELL3 model.onnx missing" }
+          foreach ($f in @("model.onnx","lexicon.txt","tokens.txt","phone.fst","date.fst","number.fst","speakers.txt")) {
+            Copy-Item (Join-Path $md.FullName $f) "tts-demo/package/assets/model/$f" -Force
+          }
+          Copy-Item (Join-Path $rt.FullName "lib/sherpa-onnx-cxx-api.dll") "tts-demo/package/" -Force
+          Copy-Item (Join-Path $rt.FullName "lib/sherpa-onnx-c-api.dll") "tts-demo/package/" -Force
+          Copy-Item (Join-Path $rt.FullName "lib/onnxruntime.dll") "tts-demo/package/" -Force
+          Copy-Item (Join-Path $rt.FullName "lib/onnxruntime_providers_shared.dll") "tts-demo/package/" -Force
+          "SHERPA_ROOT=$($rt.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Configure MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Compile persistent TTS worker
+        shell: pwsh
+        run: |
+          $rt = $env:SHERPA_ROOT
+          $cmd = 'cl /nologo /std:c++17 /EHsc /O2 /MT /I"' + $rt + '\include" tts-demo\native\tts-engine.cpp /link /LIBPATH:"' + $rt + '\lib" sherpa-onnx-cxx-api.lib /OUT:tts-demo\package\tts-engine.exe'
+          cmd /c $cmd
+          if ($LASTEXITCODE -ne 0) { throw "MSVC compilation failed" }
+
+      - name: Run real Windows model and Unicode smoke test
+        shell: pwsh
+        run: |
+          $package = (Resolve-Path "tts-demo/package").Path
+          $text = "恭喜中奖！获得七等奖，游戏币十枚，请到前台找网管领取奖品！"
+          $b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($text))
+          $line = "GEN" + [char]9 + "21" + [char]9 + "1.0" + [char]9 + "output\ci-smoke.wav" + [char]9 + $b64 + "`r`nQUIT`r`n"
+          [IO.File]::WriteAllText((Join-Path $package "worker-input.txt"), $line, [Text.Encoding]::ASCII)
+          Push-Location $package
+          try {
+            cmd /c "type worker-input.txt | tts-engine.exe > worker-output.txt 2> worker-error.txt"
+            if ($LASTEXITCODE -ne 0) { throw "TTS worker returned exit code $LASTEXITCODE" }
+            $out = Get-Content "worker-output.txt" -Raw
+            if ($out -notmatch "READY\t174\t8000\t" -or $out -notmatch "OK\t") { throw "TTS worker did not report READY and OK: $out" }
+            $wav = Get-Item "output/ci-smoke.wav"
+            if ($wav.Length -lt 1000) { throw "Generated WAV is too small" }
+            "Windows smoke test passed. WAV bytes: $($wav.Length)"
+          } finally { Pop-Location }
+
+      - name: Upload Windows TTS demo worker package
+        uses: actions/upload-artifact@v4
+        with:
+          name: aishell3-tts-demo-windows
+          path: tts-demo/package/
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 6
