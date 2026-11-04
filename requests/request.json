@@ -1,18 +1,21 @@
 {
   "version": 1,
-  "request_id": "skill-e2e-click-817",
+  "request_id": "msp11-chinese-voice-x86-offline-installers-20261104",
   "sources": [
     {
-      "type": "github",
-      "repository": "pallets/click",
-      "ref": "8.1.7",
-      "destination": "sources/click",
-      "include_git_history": false
+      "type": "url",
+      "url": "https://download.microsoft.com/download/A/6/4/A64012D6-D56F-4E58-85E3-531E56ABC0E6/x86_SpeechPlatformRuntime/SpeechPlatformRuntime.msi",
+      "destination": "downloads/SpeechPlatformRuntime_x86.msi"
+    },
+    {
+      "type": "url",
+      "url": "https://download.microsoft.com/download/4/0/D/40D6347A-AFA5-417D-A9BB-173D937BEED4/MSSpeech_TTS_zh-CN_HuiHui.msi",
+      "destination": "downloads/MSSpeech_TTS_zh-CN_HuiHui.msi"
     }
   ],
   "python": {
-    "enabled": true,
-    "requirements": ["click==8.1.7"],
+    "enabled": false,
+    "requirements": [],
     "requirements_files": [],
     "only_binary": true
   },
@@ -21,6 +24,6 @@
     "manager": "pnpm"
   },
   "artifact": {
-    "part_size_mb": 20
+    "part_size_mb": 100
   }
 }
