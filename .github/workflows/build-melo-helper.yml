@@ -1,0 +1,81 @@
+name: Build Windows Melo TTS Helper
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tts-winhelper/**
+      - .github/workflows/build-melo-helper.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download and verify official sherpa-onnx runtime and Melo model
+        shell: pwsh
+        run: |
+          curl.exe -fL --retry 3 --silent --show-error -o runtime.tar.bz2 "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-v2.0.1-win-x64-shared-MT-Release.tar.bz2"
+          if ($LASTEXITCODE -ne 0) { throw "runtime download failed" }
+          curl.exe -fL --retry 3 --silent --show-error -o model.tar.bz2 "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-melo-tts-zh_en.tar.bz2"
+          if ($LASTEXITCODE -ne 0) { throw "model download failed" }
+          if ((Get-FileHash runtime.tar.bz2 -Algorithm SHA256).Hash.ToLower() -ne 'dc703575a68594435f53dec93df775ff4913af851a196c0537163f21d8d2364e') { throw "runtime SHA mismatch" }
+          if ((Get-FileHash model.tar.bz2 -Algorithm SHA256).Hash.ToLower() -ne 'e58351ed7149f290a54534538badd4077cdbe6fddc964b24d0bee870415d1514') { throw "model SHA mismatch" }
+          New-Item -ItemType Directory -Force -Path runtime-unpacked,model-unpacked | Out-Null
+          tar -xjf runtime.tar.bz2 -C runtime-unpacked
+          if ($LASTEXITCODE -ne 0) { throw "runtime extract failed" }
+          tar -xjf model.tar.bz2 -C model-unpacked
+          if ($LASTEXITCODE -ne 0) { throw "model extract failed" }
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Compile native worker
+        shell: pwsh
+        run: |
+          $rt=(Get-ChildItem runtime-unpacked -Directory | Select-Object -First 1).FullName
+          New-Item -ItemType Directory -Path output -Force | Out-Null
+          $command='cl /nologo /std:c++20 /EHsc /O2 /MT /I"'+$rt+'\\include" tts-winhelper\\MeloSpeechWorker.cpp /link /LIBPATH:"'+$rt+'\\lib" sherpa-onnx-cxx-api.lib /OUT:output\\MeloSpeechWorker.exe'
+          cmd /c $command
+          if ($LASTEXITCODE -ne 0) { throw "compilation failed" }
+      - name: Test Chinese input in Unicode directory
+        shell: pwsh
+        run: |
+          $rt=(Get-ChildItem runtime-unpacked -Directory | Select-Object -First 1).FullName
+          $md=(Get-ChildItem model-unpacked -Directory | Select-Object -First 1).FullName
+          $base=Join-Path (Get-Location) '中文测试'
+          $r=Join-Path $base 'runtime'
+          $m=Join-Path $base 'model'
+          New-Item -ItemType Directory -Force -Path $r,$m | Out-Null
+          foreach($f in 'model.onnx','tokens.txt','lexicon.txt','date.fst','number.fst') {
+            Copy-Item (Join-Path $md $f) (Join-Path $m $f)
+          }
+          foreach($f in 'sherpa-onnx-cxx-api.dll','sherpa-onnx-c-api.dll','onnxruntime.dll','onnxruntime_providers_shared.dll') {
+            Copy-Item (Join-Path $rt ('lib/'+$f)) (Join-Path $r $f)
+          }
+          Copy-Item output/MeloSpeechWorker.exe $r
+          $txt='恭喜中奖！获得一等奖，电竞鼠标一个，请到前台领取奖品。'
+          $b64=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($txt))
+          $psi=[System.Diagnostics.ProcessStartInfo]::new()
+          $psi.FileName=Join-Path $r 'MeloSpeechWorker.exe'
+          $psi.WorkingDirectory=$r
+          $psi.UseShellExecute=$false
+          $psi.RedirectStandardInput=$true
+          $psi.RedirectStandardOutput=$true
+          $psi.RedirectStandardError=$true
+          $psi.CreateNoWindow=$true
+          $p=[System.Diagnostics.Process]::Start($psi)
+          $p.StandardInput.WriteLine($b64);$p.StandardInput.Close()
+          if(-not $p.WaitForExit(110000)) { $p.Kill(); throw "model synthesis timed out" }
+          $out=$p.StandardOutput.ReadToEnd()
+          $err=$p.StandardError.ReadToEnd()
+          Write-Host "Worker code=$($p.ExitCode) output=$out stderr=$err"
+          if ($p.ExitCode -ne 0 -or !(Test-Path (Join-Path $r 'speech-output.wav'))) { throw 'Windows Chinese path / UTF-8 synthesis test failed' }
+          $wav=Get-Item (Join-Path $r 'speech-output.wav')
+          if($wav.Length -lt 1000){throw "WAV invalid"}
+          Write-Host "SUCCESS. WAV bytes=$($wav.Length)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-melo-windows
+          path: output/MeloSpeechWorker.exe
+          retention-days: 3
