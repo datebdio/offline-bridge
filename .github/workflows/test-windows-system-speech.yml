@@ -1,0 +1,50 @@
+name: Test Windows built-in OneCore voice helper
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tts-voice-test/**
+      - .github/workflows/test-windows-system-speech.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Compile WinRT voice helper
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          cmd /c "cl /nologo /std:c++17 /EHsc /O2 /MT /utf-8 tts-voice-test\WinRTSpeech.cpp /link windowsapp.lib /OUT:out\WinRTSpeech.exe"
+          if ($LASTEXITCODE -ne 0) { throw "MSVC compile failed" }
+      - name: Windows 64-bit native smoke test
+        shell: pwsh
+        run: |
+          .\out\WinRTSpeech.exe list out\voices.txt
+          if ($LASTEXITCODE -ne 0) { throw "Voice enumeration failed with exit code $LASTEXITCODE" }
+          $lines = Get-Content out\voices.txt -Encoding UTF8 | Where-Object {$_ -ne ""}
+          Write-Host "Voices enumerated: $($lines.Count)"
+          if ($lines.Count -gt 0) {
+            $first = $lines[0].Split([char]9)
+            .\out\WinRTSpeech.exe speak $first[0] "Hello, this is a system voice test." out\voice-test.wav wav
+            if ($LASTEXITCODE -ne 0) { throw "Speech synthesis failed with exit code $LASTEXITCODE" }
+            $wav = Get-Item out\voice-test.wav
+            if ($wav.Length -lt 1000) { throw "Synthesized audio too short" }
+            Write-Host "WAV generated: $($wav.Length) bytes"
+          } else {
+            Write-Host "No voices on runner; enumeration code verified."
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: winrt-speech-helper
+          path: out/
+          if-no-files-found: error
+          retention-days: 3
