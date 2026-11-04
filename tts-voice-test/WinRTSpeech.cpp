@@ -1,5 +1,7 @@
 // WinRT/OneCore Windows speech tester helper. Windows 10/11 x64.
 #include <winrt/base.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Media.SpeechSynthesis.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <string>
